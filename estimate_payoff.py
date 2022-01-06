@@ -20,7 +20,7 @@ def rm(prev_contribution_group, threshold, t):
         return actions[1] #defect
 
 
-def crd(type1, type2, k, group_size, target, threshold, r, rounds, endowment):
+def npd(type1, type2, k, group_size, target, threshold, r, rounds, cost):
     """
     Simulates a classical CRD (no timing uncertainty).
     :param type1: [int] index of strategy 1
@@ -37,7 +37,7 @@ def crd(type1, type2, k, group_size, target, threshold, r, rounds, endowment):
     donations = 0.
     contributions1, contributions2 = 0., 0.
     public_account = 0.
-    payoffs = np.array([endowment, endowment])
+    payoffs = np.array([cost, cost])
 
     if type1 == type2:  # all members of the group adopt the same strategy
         for i in range(rounds):
@@ -80,7 +80,7 @@ class EstimatePayoffsNPD(object):
     ns = len(strategies)
 
     @staticmethod
-    def estimate_payoff(invader, resident, group_size, target, threshold, r, rounds, w, endowment, iterations=100):
+    def estimate_payoff(invader, resident, group_size, target, threshold, r, rounds, w, cost, iterations=100):
         """
         Estimates the payoff for invader and resident strategies,
         for the classical CRD.
@@ -102,7 +102,7 @@ class EstimatePayoffsNPD(object):
         for i in range(1, int(group_size) + 1):
             avg = 0.
             for _ in range(iterations):
-                avg += crd(invader, resident, i, group_size, target, threshold, r, rounds, endowment)[0]
+                avg += npd(invader, resident, i, group_size, target, threshold, r, rounds, cost)[0]
             payoffs.append(avg / float(iterations))
 
         # k is the number of invaders and z a dummy parameter
@@ -110,7 +110,7 @@ class EstimatePayoffsNPD(object):
 
 
     @staticmethod
-    def estimate_payoffs(group_size, target, threshold, r, m0, w, endowment,
+    def estimate_payoffs(group_size, target, threshold, r, m0, w, cost,
                          iterations=1000, uncertainty=False, save_name=None):
         """
         Estimates the payoffs of each strategy when playing against another.
@@ -133,7 +133,7 @@ class EstimatePayoffsNPD(object):
         except IOError:
             estimate = EstimatePayoffsNPD.estimate_payoff
 
-            payoffs = np.asarray([[estimate(i, j, group_size, target, threshold, r, m0, w, endowment, iterations)
+            payoffs = np.asarray([[estimate(i, j, group_size, target, threshold, r, m0, w, cost, iterations)
                                    for j in EstimatePayoffsNPD.strategies_caller] for i in
                                   EstimatePayoffsNPD.strategies_caller])
 
