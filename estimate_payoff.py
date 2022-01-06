@@ -1,6 +1,8 @@
 import numpy as np
 
-actions = np.asarray([0, 1])
+cost = 2
+
+actions = np.asarray([cost, 0])
 
 
 # Let's estimate the payoffs through simulation
@@ -15,12 +17,12 @@ def rm(prev_contribution_group, threshold, t):
     else defect
     """
     if t == 0 or prev_contribution_group >= threshold:
-        return actions[0] #coop
+        return actions[0]  # coop
     else:
-        return actions[1] #defect
+        return actions[1]  # defect
 
 
-def npd(type1, type2, k, group_size, F, threshold, rounds, cost):
+def npd(type1, type2, k, group_size, F, threshold, rounds):
     """
     Simulates a classical CRD (no timing uncertainty).
     :param F:
@@ -35,53 +37,45 @@ def npd(type1, type2, k, group_size, F, threshold, rounds, cost):
     :param endowment: [int] private endowment
     :return: [numpy.array] the payoffs of each strategy
     """
-    donations = 0.
-    contributions1, contributions2 = 0., 0.
-    public_account = 0.
-    payoffs = np.array([cost, cost])
+    payoffs = np.array([0, 0])
 
     if type1 == type2:  # all members of the group adopt the same strategy
+        prev_contrib = group_size
         for i in range(rounds):
-            don = type1(donations - contributions1, threshold, i)
-            donations = 0
+            don = type1(prev_contrib, threshold, i)
 
-            if payoffs[0] >= don:
-                payoffs[0] -= don
-                payoffs[1] -= don
-                donations += group_size * don
+            # if payoffs[0] >= don1: if endowment
+            if don > 0:  # all coop
+                payoffs[0] += ((prev_contrib * don * F) / group_size) - cost
+                payoffs[1] += ((prev_contrib * don * F) / group_size) - cost
 
-            public_account += donations
-            if public_account >= F:
-                return payoffs
+            # all defect, can return directly
+            else:
+                payoffs[0] += (prev_contrib * don * F) / group_size
+                payoffs[1] += (prev_contrib * don * F) / group_size
+
     else:
+        prev_contrib = k
         for i in range(rounds):  # the members of the group adopt different strategies
-            contributions1 = type1(donations - contributions1, threshold, i)
-            contributions2 = type2(donations - contributions2, threshold, i)
-            donations = 0
+            don1 = type1(prev_contrib, threshold, i)
+            don2 = type2(prev_contrib, threshold, i)
 
-            if payoffs[0] >= contributions1:
-                payoffs[0] -= contributions1
-                donations += k * contributions1
+            # if payoffs[0] >= don1: if endowment
+            payoffs[0] += ((prev_contrib * don1 * F) / group_size) - cost  # coop
 
-            if payoffs[1] >= contributions2:
-                payoffs[1] -= contributions2
-                donations += (group_size - k) * contributions2
+            # if payoffs[1] >= don2: if endowment
+            payoffs[1] += ((prev_contrib * don1 * F) / group_size)  # defect
 
-            public_account += donations
-            if public_account >= F:
-                return payoffs
-
-    # if the target isn't met, the expected payoff is (1-risk) * payoff
-    return (1.0 - r) * payoffs
+    return payoffs
 
 
 class EstimatePayoffsNPD(object):
     strategies = ['AL_DEFECT', 'RM']
-    strategies_caller = [always_defect,rm]
+    strategies_caller = [always_defect, rm]
     ns = len(strategies)
 
     @staticmethod
-    def estimate_payoff(invader, resident, group_size, F, threshold, rounds, cost, iterations=100):
+    def estimate_payoff(invader, resident, group_size, F, threshold, rounds, iterations=100):
         """
         Estimates the payoff for invader and resident strategies,
         for the classical CRD.
@@ -103,15 +97,14 @@ class EstimatePayoffsNPD(object):
         for i in range(1, int(group_size) + 1):
             avg = 0.
             for _ in range(iterations):
-                avg += npd(invader, resident, i, group_size, F, threshold, rounds, cost)[0]
+                avg += npd(invader, resident, i, group_size, F, threshold, rounds)[0]
             payoffs.append(avg / float(iterations))
 
         # k is the number of invaders and z a dummy parameter
         return lambda k, z: payoffs[int(k) - 1]
 
-
     @staticmethod
-    def estimate_payoffs(group_size, F, threshold, m0, cost,
+    def estimate_payoffs(group_size, F, threshold, m0,
                          iterations=1000, save_name=None):
         """
         Estimates the payoffs of each strategy when playing against another.
@@ -133,7 +126,7 @@ class EstimatePayoffsNPD(object):
         except IOError:
             estimate = EstimatePayoffsNPD.estimate_payoff
 
-            payoffs = np.asarray([[estimate(i, j, group_size, F, threshold, m0, cost, iterations)
+            payoffs = np.asarray([[estimate(i, j, group_size, F, threshold, m0, iterations)
                                    for j in EstimatePayoffsNPD.strategies_caller] for i in
                                   EstimatePayoffsNPD.strategies_caller])
 
