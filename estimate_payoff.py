@@ -20,14 +20,15 @@ def rm(prev_contribution_group, threshold, t):
         return actions[1] #defect
 
 
-def npd(type1, type2, k, group_size, target, threshold, r, rounds, cost):
+def npd(type1, type2, k, group_size, F, threshold, r, rounds, cost):
     """
     Simulates a classical CRD (no timing uncertainty).
+    :param F:
+    :param cost:
     :param type1: [int] index of strategy 1
     :param type2: [int] index of strategy 2
     :param k: [int] number of group members adopting strategy 1
     :param group_size: [int] group size
-    :param target: [int]
     :param threshold: [int]
     :param r: [float] risk
     :param rounds: [int] total number of rounds
@@ -50,7 +51,7 @@ def npd(type1, type2, k, group_size, target, threshold, r, rounds, cost):
                 donations += group_size * don
 
             public_account += donations
-            if public_account >= target:
+            if public_account >= F:
                 return payoffs
     else:
         for i in range(rounds):  # the members of the group adopt different strategies
@@ -67,7 +68,7 @@ def npd(type1, type2, k, group_size, target, threshold, r, rounds, cost):
                 donations += (group_size - k) * contributions2
 
             public_account += donations
-            if public_account >= target:
+            if public_account >= F:
                 return payoffs
 
     # if the target isn't met, the expected payoff is (1-risk) * payoff
@@ -80,19 +81,19 @@ class EstimatePayoffsNPD(object):
     ns = len(strategies)
 
     @staticmethod
-    def estimate_payoff(invader, resident, group_size, target, threshold, r, rounds, w, cost, iterations=100):
+    def estimate_payoff(invader, resident, group_size, F, threshold, r, rounds, w, cost, iterations=100):
         """
         Estimates the payoff for invader and resident strategies,
         for the classical CRD.
+        :param cost:
+        :param F:
         :param invader: [int] index of the invading strategy
         :param resident: [int] index of the resident strategy
         :param group_size: [int] group size
-        :param target: [int] collective target
         :param threshold: [int] contribution threshold for the conditional strategies
         :param r: [float] risk
         :param rounds: [int] number of rounds
         :param w: parameter not used
-        :param endowment: [int] private endowment
         :param iterations: [int] number of iterations used to average the game results
                (only relevant for stochastic results)
         :return: [lambda] function that returns the payoff of a crd group for each possible
@@ -102,7 +103,7 @@ class EstimatePayoffsNPD(object):
         for i in range(1, int(group_size) + 1):
             avg = 0.
             for _ in range(iterations):
-                avg += npd(invader, resident, i, group_size, target, threshold, r, rounds, cost)[0]
+                avg += npd(invader, resident, i, group_size, F, threshold, r, rounds, cost)[0]
             payoffs.append(avg / float(iterations))
 
         # k is the number of invaders and z a dummy parameter
@@ -110,19 +111,18 @@ class EstimatePayoffsNPD(object):
 
 
     @staticmethod
-    def estimate_payoffs(group_size, target, threshold, r, m0, w, cost,
-                         iterations=1000, uncertainty=False, save_name=None):
+    def estimate_payoffs(group_size, F, threshold, r, m0, w, cost,
+                         iterations=1000, save_name=None):
         """
         Estimates the payoffs of each strategy when playing against another.
+        :param cost:
+        :param F:
         :param group_size: [int] group size
-        :param target: [int] collective target
         :param threshold: [int] contribution threshold for the conditional strategies
         :param r: [float] risk
         :param m0: [int] minimum number of rounds
         :param w: [float] probability that the game will and after the minimum number of rounds
-        :param endowment: [int] private endowment
         :param iterations: [int] number of iterations used to average the game results
-        :param uncertainty: [boolean] indicates whether the simulation is with or without timing uncertainty
         :param save_name: [string] name/path of file to save results, if None, the results are not saved
         :return: [numpy.array] the estimated payoffs
         """
@@ -133,7 +133,7 @@ class EstimatePayoffsNPD(object):
         except IOError:
             estimate = EstimatePayoffsNPD.estimate_payoff
 
-            payoffs = np.asarray([[estimate(i, j, group_size, target, threshold, r, m0, w, cost, iterations)
+            payoffs = np.asarray([[estimate(i, j, group_size, F, threshold, r, m0, w, cost, iterations)
                                    for j in EstimatePayoffsNPD.strategies_caller] for i in
                                   EstimatePayoffsNPD.strategies_caller])
 
