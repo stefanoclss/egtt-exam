@@ -11,15 +11,13 @@ def always_defect(prev_contribution_group, threshold, t):
 
 def rm(prev_contribution_group, threshold, t):
     """
-    If prev_donations >= threshold -> contribute 4
-    else contribute 0
+    If prev_donations >= threshold -> coop
+    else defect
     """
-    if t == 0:
-        return actions[0]
-    elif prev_contribution_group < threshold:
-        return actions[0]
+    if t == 0 or prev_contribution_group >= threshold:
+        return actions[0] #coop
     else:
-        return actions[2]
+        return actions[1] #defect
 
 
 def crd(type1, type2, k, group_size, target, threshold, r, rounds, endowment):
@@ -76,20 +74,9 @@ def crd(type1, type2, k, group_size, target, threshold, r, rounds, endowment):
     return (1.0 - r) * payoffs
 
 
-def crd_uncertainty(type1, type2, frac, group_size, target, threshold, r, m0, w, endowment):
-    """
-    CRD with timing uncertainty.
-    The final round is sampled from a geometric distribution with probability :param w
-    summing a minimum number of rounds :param m0.
-    """
-    # we have to subtract 1 so that 1 trial means the game ends in m0 round
-    total_rounds = np.random.geometric(p=w, size=1) + m0 - 1
-    return crd(type1, type2, frac, group_size, target, threshold, r, int(total_rounds), endowment)
-
-
-class EstimatePayoffsCRD(object):
-    strategies = ['AL0', 'AL2', 'AL4', 'COMPENSATOR', 'RECIPROCAL']
-    strategies_caller = [always_zero, always_two, always_four, compensator, reciprocal]
+class EstimatePayoffsNPD(object):
+    strategies = ['AL_DEFECT', 'RM']
+    strategies_caller = [always_defect,rm]
     ns = len(strategies)
 
     @staticmethod
@@ -121,33 +108,6 @@ class EstimatePayoffsCRD(object):
         # k is the number of invaders and z a dummy parameter
         return lambda k, z: payoffs[int(k) - 1]
 
-    @staticmethod
-    def estimate_payoff_uncertainty(invader, resident, group_size, target, threshold, r, m0, w, endowment,
-                                    iterations=100):
-        """
-        Estimates the payoff for invader and resident strategies for the CRD with timing uncertainty
-        :param invader: [int] index of the invading strategy
-        :param resident: [int] index of the resident strategy
-        :param group_size: [int] group size
-        :param target: [int] collective target
-        :param threshold: [int] contribution threshold for the conditional strategies
-        :param r: [float] risk
-        :param m0: [int] minimum number of rounds
-        :param w: [float] probability that the game will and after the minimum number of rounds
-        :param endowment: [int] private endowment
-        :param iterations: [int] number of iterations used to average the game results
-        :return: [lambda] function that returns the payoff of a crd group for each possible
-                configuration of invader and resident strategies
-        """
-        payoffs = []
-        for i in range(1, int(group_size) + 1):
-            avg = 0.
-            for _ in range(iterations):
-                avg += crd_uncertainty(invader, resident, i, group_size, target, threshold, r, m0, w, endowment)[0]
-            payoffs.append(avg / float(iterations))
-
-        # k is the number of invaders and z a dummy parameter
-        return lambda k, z: payoffs[int(k) - 1]
 
     @staticmethod
     def estimate_payoffs(group_size, target, threshold, r, m0, w, endowment,
@@ -171,14 +131,11 @@ class EstimatePayoffsCRD(object):
         try:
             payoffs = pickle.load(open("{}.pkl".format(save_name), "rb"))
         except IOError:
-            if uncertainty:
-                estimate = EstimatePayoffsCRD.estimate_payoff_uncertainty
-            else:
-                estimate = EstimatePayoffsCRD.estimate_payoff
+            estimate = EstimatePayoffsNPD.estimate_payoff
 
             payoffs = np.asarray([[estimate(i, j, group_size, target, threshold, r, m0, w, endowment, iterations)
-                                   for j in EstimatePayoffsCRD.strategies_caller] for i in
-                                  EstimatePayoffsCRD.strategies_caller])
+                                   for j in EstimatePayoffsNPD.strategies_caller] for i in
+                                  EstimatePayoffsNPD.strategies_caller])
 
             if save_name is not None:
                 pickle.dump(payoffs, open("{}.pkl".format(save_name), "wb"))
