@@ -64,7 +64,7 @@ def npd(type1, type2, k, group_size, F, threshold, rounds):
             payoffs[0] += ((prev_contrib * don1 * F) / group_size) - cost  # coop
 
             # if payoffs[1] >= don2: if endowment
-            payoffs[1] += ((prev_contrib * don1 * F) / group_size)  # defect
+            payoffs[1] += ((prev_contrib * don2 * F) / group_size)  # defect
 
     return payoffs
 
