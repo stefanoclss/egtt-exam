@@ -9,7 +9,7 @@ import random as random
 from matplotlib import pyplot as plt
 
 
-# In[311]:
+# In[360]:
 
 
 beta = 1.
@@ -17,7 +17,7 @@ mu = 1e-3
 Z=100
 N=5
 nb_generations=10**5
-nb_runs=30
+nb_runs=3
 
 R=round((1-0.9)**-1)
 c=6
@@ -26,7 +26,7 @@ F=4.25
 #Mn will be n
 
 
-# In[312]:
+# In[362]:
 
 
 def select_random_without_replacement(population,number):
@@ -37,13 +37,17 @@ def estimate_fitness(selected, population, N, Z):
     PA=selected[0][1]
     PB=selected[1][1]
     
-    numberRm=Z-population.count(0) 
+    groups=select_random_without_replacement(population,N)
+    group=[]
+    for player in groups:
+        group.append(player[1])
+    numberRm=N-group.count(0) 
     
-    M5=population.count(5)
-    M4=population.count(4)
-    M3=population.count(3)
-    M2=population.count(2)
-    M1=population.count(1)
+    M5=group.count(5)
+    M4=group.count(4)
+    M3=group.count(3)
+    M2=group.count(2)
+    M1=group.count(1)
     
     if(numberRm>=5):
         investers=numberRm
@@ -64,15 +68,15 @@ def estimate_fitness(selected, population, N, Z):
         M=0
         investers=0
         
-    ResultA=payoffs[PA][PB](investers,Z)
-    ResultB=payoffs[PB][PA](investers,Z)
+    ResultA=payoffs[PA][PB](investers,N)
+    ResultB=payoffs[PB][PA](investers,N)
     return ResultA,ResultB
 
 def prob_imitation(beta,fitness):
     return 1./(1. + np.exp(beta*(fitness[0]-fitness[1])))
 
 
-# In[313]:
+# In[363]:
 
 
 def moran_step(current_state, beta, mu, N, Z):
@@ -91,7 +95,7 @@ def moran_step(current_state, beta, mu, N, Z):
     return current_state
 
 
-# In[314]:
+# In[364]:
 
 
 def estimate_stationary_distribution(nb_runs, nb_generations, beta, mu,N, Z):
@@ -140,10 +144,10 @@ def estimate_stationary_distribution(nb_runs, nb_generations, beta, mu,N, Z):
             counterM5.append(nbM5)
     
     
-    return np.mean(counterAD),np.mean(counterM1),np.mean(counterM2),np.mean(counterM3),np.mean(counterM4),np.mean(counterM5)
+    return np.mean(counterAD)/100,np.mean(counterM1)/100,np.mean(counterM2)/100,np.mean(counterM3)/100,np.mean(counterM4)/100,np.mean(counterM5)/100
 
 
-# In[315]:
+# In[365]:
 
 
 import numpy as np
@@ -324,29 +328,29 @@ class EstimatePayoffsNPD(object):
         return payoffs
 
 
-# In[306]:
+# In[366]:
 
 
 R=(1-0.9)**-1
 F=4.25
 N=5
 estimateM1AD = EstimatePayoffsNPD()
-payoffs=estimateM1AD.estimate_payoffs(Z, F, round(R),100)
+payoffs=estimateM1AD.estimate_payoffs(N, F, round(R),100)
 
 
-# In[316]:
+# In[367]:
 
 
 counter=estimate_stationary_distribution(nb_runs,nb_generations,beta,mu,N,Z)
 
 
-# In[317]:
+# In[368]:
 
 
 print(counter)
 
 
-# In[318]:
+# In[369]:
 
 
 print(sum(counter))
