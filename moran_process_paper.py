@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[270]:
+# In[569]:
 
 
 import numpy as np
@@ -9,15 +9,15 @@ import random as random
 from matplotlib import pyplot as plt
 
 
-# In[360]:
+# In[637]:
 
 
-beta = 1.
+beta = 0.05
 mu = 1e-3
 Z=100
 N=5
-nb_generations=10**5
-nb_runs=3
+nb_generations=10**4
+nb_runs=30
 
 R=round((1-0.9)**-1)
 c=6
@@ -26,7 +26,7 @@ F=4.25
 #Mn will be n
 
 
-# In[362]:
+# In[638]:
 
 
 def select_random_without_replacement(population,number):
@@ -49,25 +49,8 @@ def estimate_fitness(selected, population, N, Z):
     M2=group.count(2)
     M1=group.count(1)
     
-    if(numberRm>=5):
-        investers=numberRm
-        M=5
-    elif(numberRm==4):
-        investers=M4+M3+M2+M1
-        M=4
-    elif(numberRm==3):
-        investers=M3+M2+M1
-        M=3
-    elif(numberRm==2):
-        investers=M2+M1
-        M=2
-    elif(numberRm==1):
-        M=1
-        investers=M1
-    else:
-        M=0
-        investers=0
-        
+    investers = numberRm
+    
     ResultA=payoffs[PA][PB](investers,N)
     ResultB=payoffs[PB][PA](investers,N)
     return ResultA,ResultB
@@ -76,7 +59,7 @@ def prob_imitation(beta,fitness):
     return 1./(1. + np.exp(beta*(fitness[0]-fitness[1])))
 
 
-# In[363]:
+# In[639]:
 
 
 def moran_step(current_state, beta, mu, N, Z):
@@ -95,7 +78,7 @@ def moran_step(current_state, beta, mu, N, Z):
     return current_state
 
 
-# In[364]:
+# In[640]:
 
 
 def estimate_stationary_distribution(nb_runs, nb_generations, beta, mu,N, Z):
@@ -106,7 +89,7 @@ def estimate_stationary_distribution(nb_runs, nb_generations, beta, mu,N, Z):
     counterM4=[]
     counterM5=[]
     for n in range(nb_runs):
-        
+        print("run",n)
         distribution = [random.random() for i in range(0,6)]
         total = sum(distribution)
         distribution = [ np.round((i/total)*100) for i in distribution]
@@ -147,7 +130,7 @@ def estimate_stationary_distribution(nb_runs, nb_generations, beta, mu,N, Z):
     return np.mean(counterAD)/100,np.mean(counterM1)/100,np.mean(counterM2)/100,np.mean(counterM3)/100,np.mean(counterM4)/100,np.mean(counterM5)/100
 
 
-# In[365]:
+# In[641]:
 
 
 import numpy as np
@@ -269,8 +252,8 @@ def npd(type1, type2, k, group_size, F, rounds):
 
 
 class EstimatePayoffsNPD(object):
-    strategies = ['R1','R2','R3','R4','R5''AL_DEFECT']
-    strategies_caller = [r1,r2,r3,r4,r5,always_defect]
+    strategies = ['R5''AL_DEFECT','R1','R2','R3','R4']
+    strategies_caller = [always_defect,r1,r2,r3,r4,r5]
     ns = len(strategies)
 
     @staticmethod
@@ -328,7 +311,7 @@ class EstimatePayoffsNPD(object):
         return payoffs
 
 
-# In[366]:
+# In[642]:
 
 
 R=(1-0.9)**-1
@@ -338,22 +321,75 @@ estimateM1AD = EstimatePayoffsNPD()
 payoffs=estimateM1AD.estimate_payoffs(N, F, round(R),100)
 
 
-# In[367]:
+# In[643]:
 
 
 counter=estimate_stationary_distribution(nb_runs,nb_generations,beta,mu,N,Z)
 
 
-# In[368]:
+# In[644]:
 
 
 print(counter)
 
 
-# In[369]:
+# In[645]:
 
 
 print(sum(counter))
+
+
+# In[631]:
+
+
+values=[10**-4,2*10**-4,4*10**-4,6*10**-4,8*10**-4,10**-3,2*10**-3,4*10**-3,6*10**-3,8*10**-3,10**-2,2*10**-2,4*10**-2,6*10**-2,8*10**-2,10**-1,2*10**-1,4*10**-1,6*10**-1,8*10**-1,1]
+
+
+# In[648]:
+
+
+values = np.exp(np.linspace(np.log(10**-4), np.log(1), 20))
+
+
+# In[649]:
+
+
+print(values)
+
+
+# In[650]:
+
+
+StationaryAD=[]
+StationaryM1=[]
+StationaryM2=[]
+StationaryM3=[]
+StationaryM4=[]
+StationaryM5=[]
+StationaryM6=[]
+
+for mus in values:
+    counter=estimate_stationary_distribution(nb_runs,nb_generations,beta,mus,N,Z)
+    StationaryAD.append(counter[0])
+    StationaryM1.append(counter[1])
+    StationaryM2.append(counter[2])
+    StationaryM3.append(counter[3])
+    StationaryM4.append(counter[4])
+    StationaryM5.append(counter[5])
+
+
+# In[651]:
+
+
+plt.scatter(values,StationaryM1,color="black")
+plt.scatter(values,StationaryM2,marker="s")
+plt.scatter(values,StationaryM3,marker="D")
+plt.scatter(values,StationaryM4,marker="^")
+plt.scatter(values,StationaryM5,marker="*")
+plt.scatter(values,StationaryAD,marker="v")
+plt.xscale("log")
+plt.legend(["M1","M2","M3","M4","M5","AD"])
+plt.show()
 
 
 # In[ ]:
