@@ -324,20 +324,6 @@ def fig3a(r):
         optimal[r].append(argmax(stationary_distribution))
     return (r,optimal[r])
 
-# for r in range(len(rs)):
-#     print(r)
-#     optimal.append([])
-#     for f in Fs:
-#         payoffs = estimateM1AD.estimate_payoffs(N, f, round(rs[r]), 100)
-#         nb_strategies = 6; Z = 100; N = 5;
-#         beta = 1
-#         evolver= StochDynamics(nb_strategies, payoffs, Z,N)
-#         evolver.mu = 0
-#         transition_matrix,fixation_probabilities = evolver.transition_and_fixation_matrix(beta)
-#         stationary_distribution = egt.utils.calculate_stationary_distribution(transition_matrix)
-#         optimal[r].append(argmax(stationary_distribution))
-
-
 labels = {0:"M=1",1:"M=2",2:"M=3",3:"M=4",4:"M=5",5:"AD"}
 exist = {}
 if __name__ == "__main__":
