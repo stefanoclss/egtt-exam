@@ -318,7 +318,7 @@ R=(1-0.9)**-1
 F=4.25
 N=5
 estimateM1AD = EstimatePayoffsNPD()
-payoffs=estimateM1AD.estimate_payoffs(N, F, round(R),100)
+payoffs=estimateM1AD.estimate_payoffs(N, F, round(R),1000)
 
 
 # In[643]:
