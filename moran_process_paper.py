@@ -368,31 +368,33 @@ StationaryM4=[]
 StationaryM5=[]
 StationaryM6=[]
 
-for mus in values:
-    counter=estimate_stationary_distribution(nb_runs,nb_generations,beta,mus,N,Z)
-    StationaryAD.append(counter[0])
-    StationaryM1.append(counter[1])
-    StationaryM2.append(counter[2])
-    StationaryM3.append(counter[3])
-    StationaryM4.append(counter[4])
-    StationaryM5.append(counter[5])
+# for mus in values:
+#     counter=estimate_stationary_distribution(nb_runs,nb_generations,beta,mus,N,Z)
+#     StationaryAD.append(counter[0])
+#     StationaryM1.append(counter[1])
+#     StationaryM2.append(counter[2])
+#     StationaryM3.append(counter[3])
+#     StationaryM4.append(counter[4])
+#     StationaryM5.append(counter[5])
+#
+#
+# # In[651]:
+#
+#
+# plt.scatter(values,StationaryM1,color="black")
+# plt.scatter(values,StationaryM2,marker="s")
+# plt.scatter(values,StationaryM3,marker="D")
+# plt.scatter(values,StationaryM4,marker="^")
+# plt.scatter(values,StationaryM5,marker="*")
+# plt.scatter(values,StationaryAD,marker="v")
+# plt.xscale("log")
+# plt.legend(["M1","M2","M3","M4","M5","AD"])
+# plt.show()
+#
+#
+# # In[ ]:
 
 
-# In[651]:
-
-
-plt.scatter(values,StationaryM1,color="black")
-plt.scatter(values,StationaryM2,marker="s")
-plt.scatter(values,StationaryM3,marker="D")
-plt.scatter(values,StationaryM4,marker="^")
-plt.scatter(values,StationaryM5,marker="*")
-plt.scatter(values,StationaryAD,marker="v")
-plt.xscale("log")
-plt.legend(["M1","M2","M3","M4","M5","AD"])
-plt.show()
-
-
-# In[ ]:
 
 
 

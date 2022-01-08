@@ -7,11 +7,7 @@
 import numpy as np
 # Plotting libraries
 import matplotlib.pylab as plt
-# Magic function to make matplotlib inline; other style specs must come AFTER
-get_ipython().run_line_magic('matplotlib', 'inline')
-# This enables high resolution PNGs.
-get_ipython().run_line_magic('config', "InlineBackend.figure_formats = {'png', 'svg'}")
-import numpy as np
+
 import matplotlib.pyplot as plt
 import egttools as egt
 
@@ -25,7 +21,7 @@ from egttools.plotting import plot_gradient
 
 
 # In[27]:
-
+from numpy import argmax
 
 cost = 6.5
 
@@ -296,15 +292,33 @@ print()
 # In[ ]:
 
 
-for F in [3.75,4.,4.25,4.5]:
-    payoffs=estimateM1AD.estimate_payoffs(N, F, round(R),10)
-    nb_strategies = 6; Z = 100; N = 5;
-    beta = 1
-    evolver= StochDynamics(nb_strategies, payoffs, Z,N)
-    evolver.mu = 0
-    stationary_SML = evolver.calculate_stationary_distribution(beta)
-    transition_matrix,fixation_probabilities = evolver.transition_and_fixation_matrix(beta)
-    stationary_distribution = egt.utils.calculate_stationary_distribution(transition_matrix)
-    print(fixation_probabilities)
-    print(stationary_distribution)
+# for F in [3.75,4.,4.25,4.5]:
+#     payoffs=estimateM1AD.estimate_payoffs(N, F, round(R),10)
+#     nb_strategies = 6; Z = 100; N = 5;
+#     beta = 1
+#     evolver= StochDynamics(nb_strategies, payoffs, Z,N)
+#     evolver.mu = 0
+#     transition_matrix,fixation_probabilities = evolver.transition_and_fixation_matrix(beta)
+#     stationary_distribution = egt.utils.calculate_stationary_distribution(transition_matrix)
+#     print(fixation_probabilities)
+#     print(stationary_distribution)
+
+Fs = np.arange(2.5,5.1,0.1)
+rs = np.arange(2,40,2)
+optimal = []
+for r in range(len(rs)):
+    print(r)
+    optimal.append([])
+    for f in Fs:
+        payoffs = estimateM1AD.estimate_payoffs(N, f, round(rs[r]), 100)
+        nb_strategies = 6; Z = 100; N = 5;
+        beta = 1
+        evolver= StochDynamics(nb_strategies, payoffs, Z,N)
+        evolver.mu = 0
+        transition_matrix,fixation_probabilities = evolver.transition_and_fixation_matrix(beta)
+        stationary_distribution = egt.utils.calculate_stationary_distribution(transition_matrix)
+        optimal[r].append(argmax(stationary_distribution))
+
+
+
 
