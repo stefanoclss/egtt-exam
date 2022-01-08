@@ -220,73 +220,73 @@ payoffs=estimateM1AD.estimate_payoffs(N, F, round(R),10)
 # In[43]:
 
 
-nb_strategies = 6; Z = 100;
-beta = 1
-test=np.array([
-    [payoffs[0][0](1,100),payoffs[0][1](1,100),payoffs[0][2](1,100),payoffs[0][3](1,100),payoffs[0][4](1,100),payoffs[0][5](1,100)],
-    [payoffs[1][0](1,100),payoffs[0][1](1,100),payoffs[1][2](1,100),payoffs[1][3](1,100),payoffs[1][4](1,100),payoffs[1][5](1,100)],
-    [payoffs[2][0](1,100),payoffs[2][1](1,100),payoffs[2][2](1,100),payoffs[2][3](1,100),payoffs[2][4](1,100),payoffs[2][5](1,100)],
-    [payoffs[3][0](1,100),payoffs[3][1](1,100),payoffs[3][2](1,100),payoffs[3][3](1,100),payoffs[3][4](1,100),payoffs[3][5](1,100)],
-    [payoffs[4][0](1,100),payoffs[4][1](1,100),payoffs[4][2](1,100),payoffs[4][3](1,100),payoffs[4][4](1,100),payoffs[4][5](1,100)],
-    [payoffs[5][0](1,100),payoffs[5][1](1,100),payoffs[5][2](1,100),payoffs[5][3](1,100),payoffs[5][4](1,100),payoffs[5][5](1,100)]
-])
-print(test)
-evolver= StochDynamics(nb_strategies, test, Z)
-evolver.mu = 0
-stationary_SML = evolver.calculate_stationary_distribution(beta)
-transition_matrix,fixation_probabilities = evolver.transition_and_fixation_matrix(beta)
-stationary_distribution = egt.utils.calculate_stationary_distribution(transition_matrix)
-print(fixation_probabilities)
-print(stationary_distribution)
+# nb_strategies = 6; Z = 100;
+# beta = 1
+# test=np.array([
+#     [payoffs[0][0](1,100),payoffs[0][1](1,100),payoffs[0][2](1,100),payoffs[0][3](1,100),payoffs[0][4](1,100),payoffs[0][5](1,100)],
+#     [payoffs[1][0](1,100),payoffs[0][1](1,100),payoffs[1][2](1,100),payoffs[1][3](1,100),payoffs[1][4](1,100),payoffs[1][5](1,100)],
+#     [payoffs[2][0](1,100),payoffs[2][1](1,100),payoffs[2][2](1,100),payoffs[2][3](1,100),payoffs[2][4](1,100),payoffs[2][5](1,100)],
+#     [payoffs[3][0](1,100),payoffs[3][1](1,100),payoffs[3][2](1,100),payoffs[3][3](1,100),payoffs[3][4](1,100),payoffs[3][5](1,100)],
+#     [payoffs[4][0](1,100),payoffs[4][1](1,100),payoffs[4][2](1,100),payoffs[4][3](1,100),payoffs[4][4](1,100),payoffs[4][5](1,100)],
+#     [payoffs[5][0](1,100),payoffs[5][1](1,100),payoffs[5][2](1,100),payoffs[5][3](1,100),payoffs[5][4](1,100),payoffs[5][5](1,100)]
+# ])
+# print(test)
+# evolver= StochDynamics(nb_strategies, test, Z)
+# evolver.mu = 0
+# stationary_SML = evolver.calculate_stationary_distribution(beta)
+# transition_matrix,fixation_probabilities = evolver.transition_and_fixation_matrix(beta)
+# stationary_distribution = egt.utils.calculate_stationary_distribution(transition_matrix)
+# print(fixation_probabilities)
+# print(stationary_distribution)
 
 
 # In[44]:
 
 
-nb_strategies = 6; Z = 100; N = 5;
-beta = 1
-evolver= StochDynamics(nb_strategies, payoffs, Z,N)
-evolver.mu = 0
-stationary_SML = evolver.calculate_stationary_distribution(beta)
-transition_matrix,fixation_probabilities = evolver.transition_and_fixation_matrix(beta)
-stationary_distribution = egt.utils.calculate_stationary_distribution(transition_matrix)
-print(fixation_probabilities)
-print(stationary_distribution)
+# nb_strategies = 6; Z = 100; N = 5;
+# beta = 1
+# evolver= StochDynamics(nb_strategies, payoffs, Z,N)
+# evolver.mu = 0
+# stationary_SML = evolver.calculate_stationary_distribution(beta)
+# transition_matrix,fixation_probabilities = evolver.transition_and_fixation_matrix(beta)
+# stationary_distribution = egt.utils.calculate_stationary_distribution(transition_matrix)
+# print(fixation_probabilities)
+# print(stationary_distribution)
 
 
 # In[45]:
 
 
-strategy_labels=["M1","M2","M3","M4","M5","AD"]
-ig, ax = plt.subplots(figsize=(5, 5), dpi=150)
-G = egt.plotting.draw_stationary_distribution(strategy_labels,
-                                              1/Z, fixation_probabilities, stationary_distribution,
-                                              node_size=600,
-                                              font_size_node_labels=8,
-                                              font_size_edge_labels=8,
-                                              font_size_sd_labels=8,
-                                              edge_width=1,
-                                              min_strategy_frequency=0.00001,
-                                              ax=ax)
-plt.axis('off')
-plt.show() # display
+# strategy_labels=["M1","M2","M3","M4","M5","AD"]
+# ig, ax = plt.subplots(figsize=(5, 5), dpi=150)
+# G = egt.plotting.draw_stationary_distribution(strategy_labels,
+#                                               1/Z, fixation_probabilities, stationary_distribution,
+#                                               node_size=600,
+#                                               font_size_node_labels=8,
+#                                               font_size_edge_labels=8,
+#                                               font_size_sd_labels=8,
+#                                               edge_width=1,
+#                                               min_strategy_frequency=0.00001,
+#                                               ax=ax)
+# plt.axis('off')
+# plt.show() # display
 
 
 # In[46]:
 
 
-M2AD = np.array([
-    [payoffs[1][1](1,100), payoffs[1][5](1,100)],
-    [payoffs[5][1](1,100), payoffs[5][5](1,100)]
-])
-nb_strategies = 2; Z = 100; N = 5;
-beta = 1
-evolverM2AD = StochDynamics(nb_strategies, M2AD, Z)
-evolverM2AD.mu = 0
-print("M2 invade AD with p =", evolverM2AD.fixation_probability(0,1,beta))
-print("AD invade M2 with p =",evolverM2AD.fixation_probability(1,0,beta))
-transition_matrix,fixation_probabilities = evolverM2AD.transition_and_fixation_matrix(beta)
-print()
+# M2AD = np.array([
+#     [payoffs[1][1](1,100), payoffs[1][5](1,100)],
+#     [payoffs[5][1](1,100), payoffs[5][5](1,100)]
+# ])
+# nb_strategies = 2; Z = 100; N = 5;
+# beta = 1
+# evolverM2AD = StochDynamics(nb_strategies, M2AD, Z)
+# evolverM2AD.mu = 0
+# print("M2 invade AD with p =", evolverM2AD.fixation_probability(0,1,beta))
+# print("AD invade M2 with p =",evolverM2AD.fixation_probability(1,0,beta))
+# transition_matrix,fixation_probabilities = evolverM2AD.transition_and_fixation_matrix(beta)
+# print()
 
 
 # In[ ]:
@@ -304,21 +304,66 @@ print()
 #     print(stationary_distribution)
 
 Fs = np.arange(2.5,5.1,0.1)
-rs = np.arange(2,40,2)
-optimal = []
-for r in range(len(rs)):
+rs = np.arange(2,42,2)
+
+optimal = [[] for _ in range(len(rs))]
+
+nb_strategies = 6;
+Z = 100;
+N = 5;
+beta = 1
+
+def fig3a(r):
     print(r)
-    optimal.append([])
     for f in Fs:
         payoffs = estimateM1AD.estimate_payoffs(N, f, round(rs[r]), 100)
-        nb_strategies = 6; Z = 100; N = 5;
-        beta = 1
-        evolver= StochDynamics(nb_strategies, payoffs, Z,N)
+        evolver = StochDynamics(nb_strategies, payoffs, Z, N)
         evolver.mu = 0
-        transition_matrix,fixation_probabilities = evolver.transition_and_fixation_matrix(beta)
+        transition_matrix, fixation_probabilities = evolver.transition_and_fixation_matrix(beta)
         stationary_distribution = egt.utils.calculate_stationary_distribution(transition_matrix)
         optimal[r].append(argmax(stationary_distribution))
+    return (r,optimal[r])
+
+# for r in range(len(rs)):
+#     print(r)
+#     optimal.append([])
+#     for f in Fs:
+#         payoffs = estimateM1AD.estimate_payoffs(N, f, round(rs[r]), 100)
+#         nb_strategies = 6; Z = 100; N = 5;
+#         beta = 1
+#         evolver= StochDynamics(nb_strategies, payoffs, Z,N)
+#         evolver.mu = 0
+#         transition_matrix,fixation_probabilities = evolver.transition_and_fixation_matrix(beta)
+#         stationary_distribution = egt.utils.calculate_stationary_distribution(transition_matrix)
+#         optimal[r].append(argmax(stationary_distribution))
 
 
+labels = {0:"M=1",1:"M=2",2:"M=3",3:"M=4",4:"M=5",5:"AD"}
+exist = {}
+if __name__ == "__main__":
+    from joblib import Parallel, delayed
+
+    delayed_funcs = [delayed(fig3a)(i) for i in range(len(rs))]
+    parallel_pool = Parallel(n_jobs=-1,backend="loky")
+    result = parallel_pool(delayed_funcs)
+    for r in result:
+        optimal[r[0]] = r[1]
+
+
+    # Plot stacked bar chart
+    w = 2
+    colors = ["lightgrey","grey","navy","blueviolet","darkviolet","slateblue"]
+    for r in range(len(rs)):
+        for o in range(len(optimal[r])):
+            if not optimal[r][o] in exist:
+                plt.bar(rs[r], [0.1], w,color=colors[optimal[r][o]],bottom=[Fs[o]],
+                        label=labels[optimal[r][o]])
+                exist[optimal[r][o]] = True
+            else:
+                plt.bar(rs[r], [0.1], w, color=colors[optimal[r][o]], bottom=[Fs[o]])
+    plt.legend(loc=1)
+    plt.xlabel('< r >')
+    plt.ylabel('F')
+    plt.show()
 
 
