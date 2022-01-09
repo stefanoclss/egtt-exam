@@ -37,41 +37,48 @@ def npd(type1, type2, k, group_size, F, threshold, rounds):
     :param endowment: [int] private endowment
     :return: [numpy.array] the payoffs of each strategy
     """
-    payoffs = np.array([0, 0])
-
-    if type1 == type2:  # all members of the group adopt the same strategy
+    payoffs = np.array([0, 0], dtype=float)
+    if type1 == type2:  # all members of the group adopt the same global strategy
         prev_contrib = group_size
+        total = 0
         for i in range(rounds):
-            don = type1(prev_contrib, threshold, i)
-
-            # if payoffs[0] >= don1: if endowment
+            don = type1(prev_contrib,threshold, i)
+            total += (prev_contrib * don)
+            # if payoffs[0] >= don1: #if endowment
             if don > 0:  # all coop
-                payoffs[0] += ((prev_contrib * don * F) / group_size) - cost
-                payoffs[1] += ((prev_contrib * don * F) / group_size) - cost
+                payoffs[0] -= don
+                payoffs[1] -= don
 
-            # all defect, can return directly
-            else:
-                payoffs[0] += (prev_contrib * don * F) / group_size
-                payoffs[1] += (prev_contrib * don * F) / group_size
+        payoffs[0] += (total * F) / group_size
+        payoffs[1] += (total * F) / group_size
 
     else:
-        prev_contrib = k
+
+        if (type1(k, threshold, 0) == 0):
+            prev_contrib = group_size - k
+        else:
+            prev_contrib = k
+        prev_contrib - 1
+        total = 0
         for i in range(rounds):  # the members of the group adopt different strategies
-            don1 = type1(prev_contrib, threshold, i)
-            don2 = type2(prev_contrib, threshold, i)
-
+            don1 = type1(prev_contrib,threshold, i)
+            don2 = type2(prev_contrib,threshold, i)
+            don = max(don1, don2)
+            total += (prev_contrib * don)
             # if payoffs[0] >= don1: if endowment
-            payoffs[0] += ((prev_contrib * don1 * F) / group_size) - cost  # coop
-
+            payoffs[0] -= don1
             # if payoffs[1] >= don2: if endowment
-            payoffs[1] += ((prev_contrib * don2 * F) / group_size)  # defect
+            payoffs[1] -= don2
 
-    return payoffs
+        payoffs[0] += (total * F) / group_size
+        payoffs[1] += (total * F) / group_size
+
+    return payoffs / rounds
 
 
 class EstimatePayoffsNPD(object):
-    strategies = ['AL_DEFECT', 'RM']
-    strategies_caller = [always_defect, rm]
+    strategies = ['RM','AL_DEFECT',]
+    strategies_caller = [rm , always_defect]
     ns = len(strategies)
 
     @staticmethod
