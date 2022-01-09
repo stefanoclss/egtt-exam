@@ -25,7 +25,6 @@ R = (1 - w) ** -1
 
 
 def RM_payoff(Nrm, M, c, R, F, N):
-    Nrm += 1
     if Nrm >= M:
         return (((Nrm * c) * R * F) / N) - (c * R)  # R rounds
     else:
@@ -60,8 +59,9 @@ def rp(M, c, R, F, N, state):
 sd = []
 ws = np.arange(0,1,0.1)
 for w in ws:
+    print(w)
     F = 3.5
-    M = 5
+    M = 2
     N = 5
     c = 2
     #w = 0.4
@@ -79,12 +79,12 @@ for w in ws:
     # we also annotate the gradient's direction among saddle poinst
     saddle_type, gradient_direction = find_saddle_type_and_gradient_direction(G, saddle_points_idx)
 
-# ax = plot_gradient(strategy_RM,
-#                    G,
-#                    saddle_points,
-#                    saddle_type,
-#                    gradient_direction,
-#                    'Prisoner game replicator dynamics',
-#                    xlabel='$x$')
-# plt.show()
+    ax = plot_gradient(strategy_RM,
+                       G,
+                       saddle_points,
+                       saddle_type,
+                       gradient_direction,
+                       'Prisoner game replicator dynamics',
+                       xlabel='$x$')
+    plt.show()
 print(sd)
