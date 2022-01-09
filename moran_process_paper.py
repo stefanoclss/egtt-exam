@@ -333,16 +333,6 @@ counter=estimate_stationary_distribution(nb_runs,nb_generations,beta,mu,N,Z)
 print(counter)
 
 
-# In[645]:
-
-
-print(sum(counter))
-
-
-# In[631]:
-
-values = np.logspace(10**-4,1, num=40, endpoint=True, base=10.0)
-
 # In[648]:
 
 
