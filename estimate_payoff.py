@@ -75,7 +75,7 @@ def npd(type1, type2, k, group_size, F, threshold, rounds):
 
     return payoffs / rounds
 
-
+#2 strategies estimation
 class EstimatePayoffsNPD(object):
     strategies = ['RM','AL_DEFECT',]
     strategies_caller = [rm , always_defect]
