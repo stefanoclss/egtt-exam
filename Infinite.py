@@ -25,8 +25,8 @@ R = (1 - w) ** -1
 
 
 def RM_payoff(Nrm, M, c, R, F, N):
-    if Nrm >= M:
-        return (((Nrm * c) * R * F) / N) - (c * R)  # R rounds
+    if Nrm+1 >= M:
+        return (((Nrm+1 * c) * R * F) / N) - (c * R)  # R rounds
     else:
         return (((Nrm * c) * F) / N) - c  # 1 round
 
