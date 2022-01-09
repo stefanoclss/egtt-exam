@@ -94,4 +94,6 @@ for s,e in result:
 plt.legend(loc=3)
 plt.xlabel("x")
 plt.ylabel("w")
+ax = plt.gca()
+ax.set_ylim([0, 1])
 plt.show()
